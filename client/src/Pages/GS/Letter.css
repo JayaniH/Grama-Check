@@ -1,0 +1,25 @@
+/* Letter.css */
+
+.letter {
+    
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Optional: Adjust the height as needed */
+  }
+  .form-container {
+    border: 1px solid #1d1c1c; /* Border style and color */
+    padding: 20px; /* Add some padding to the form */
+    background-color: #f9f9f9; /* Background color */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Box shadow for depth */
+    width: 80%; /* Adjust the width of the form */
+    max-width: 500px; /* Limit the maximum width of the form */
+    align-items: center;
+    margin-left: 350px;
+  }
+  
+  
+  h3 {
+    text-align: center; /* Center text within the h3 element */
+    font-size: 18px; /* Optional: Adjust the font size as needed */
+  }
+  

@@ -7,9 +7,9 @@ function NavigationBar() {
     <>
      
 
-      <Navbar bg="light" data-bs-theme="light">
+      <Navbar data-bs-theme="light" style={{backgroundColor:"#FFEA00"}}>
         <Container>
-          <Navbar.Brand href="#home">Navbar</Navbar.Brand>
+          <Navbar.Brand href="#home">Grama Check</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link href="#home">Home</Nav.Link>
             <Nav.Link href="#features">Features</Nav.Link>

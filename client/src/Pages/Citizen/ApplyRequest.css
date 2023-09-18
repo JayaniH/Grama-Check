@@ -1,0 +1,10 @@
+/* ApplyRequest.css */
+
+/* Center the child elements horizontally */
+.d-grid {
+    justify-content: center;
+    align-items: center;
+    height: 50vh; /* Adjust the height as needed */
+    margin-top: 150px;
+  }
+  

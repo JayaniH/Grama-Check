@@ -1,0 +1,11 @@
+# +required Version of the endpoint configuration YAML
+version: 0.1
+
+# +required List of endpoints to create
+endpoints:
+  - name: Identity check API
+    port: 9090
+    type: REST
+    networkVisibility: Public
+    context: /IdentityCheck
+    schemaFilePath: IdentityCheck_openapi.yaml

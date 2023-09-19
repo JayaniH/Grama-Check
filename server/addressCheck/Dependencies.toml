@@ -341,7 +341,7 @@ modules = [
 
 [[package]]
 org = "minulikannangara"
-name = "IdentityCheck"
+name = "addressCheck"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
@@ -352,6 +352,6 @@ dependencies = [
 	{org = "ballerinax", name = "mysql.driver"}
 ]
 modules = [
-	{org = "minulikannangara", packageName = "IdentityCheck", moduleName = "IdentityCheck"}
+	{org = "minulikannangara", packageName = "addressCheck", moduleName = "addressCheck"}
 ]
 

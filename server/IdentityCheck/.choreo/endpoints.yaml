@@ -6,6 +6,6 @@ endpoints:
   - name: Identity check API
     port: 9090
     type: REST
-    networkVisibility: Public
+    networkVisibilitynetworkVisibility: Organization
     context: /IdentityCheck
     schemaFilePath: IdentityCheck_openapi.yaml

@@ -1,0 +1,252 @@
+openapi: 3.0.1
+info:
+  title: UserDetails
+  version: 0.1.0
+servers:
+- url: "{server}:{port}/userDetails"
+  variables:
+    server:
+      default: http://localhost
+    port:
+      default: "9090"
+paths:
+  /userData/{NIC}:
+    get:
+      operationId: getUserdataNic
+      parameters:
+      - name: NIC
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload'
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CombinedResult'
+  /requestData/{gsDivisionCode}:
+    get:
+      operationId: getRequestdataGsdivisioncode
+      parameters:
+      - name: gsDivisionCode
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/allDetails'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload'
+components:
+  schemas:
+    ErrorPayload:
+      type: object
+      properties:
+        reason:
+          type: string
+          description: Reason phrase
+        path:
+          type: string
+          description: Request path
+        method:
+          type: string
+          description: Method type of the request
+        message:
+          type: string
+          description: Error message
+        timestamp:
+          type: string
+          description: Timestamp of the error
+        status:
+          type: integer
+          description: Relevant HTTP status code
+          format: int32
+    allDetails:
+      required:
+      - Citizen_id
+      - DOB
+      - NIC
+      - address
+      - district
+      - full_name
+      - gs_division_number
+      - occupation
+      - religion
+      - request_status
+      - requested_date
+      - required_date
+      - sex
+      - whetherSriLankan
+      type: object
+      properties:
+        Citizen_id:
+          type: integer
+          format: int64
+        full_name:
+          type: string
+        address:
+          type: string
+        gs_division_number:
+          type: string
+        sex:
+          type: string
+        whetherSriLankan:
+          type: boolean
+        religion:
+          type: string
+        occupation:
+          type: string
+        NIC:
+          type: string
+        district:
+          type: string
+        DOB:
+          $ref: '#/components/schemas/Date'
+        requested_date:
+          $ref: '#/components/schemas/Date'
+        required_date:
+          $ref: '#/components/schemas/Date'
+        request_status:
+          type: string
+    requestDetails:
+      required:
+      - Citizen_id
+      - request_id
+      - request_status
+      - requested_date
+      - required_date
+      type: object
+      properties:
+        Citizen_id:
+          type: integer
+          format: int64
+        request_id:
+          type: integer
+          format: int64
+        requested_date:
+          $ref: '#/components/schemas/Date'
+        required_date:
+          $ref: '#/components/schemas/Date'
+        request_status:
+          type: string
+    CombinedResult:
+      required:
+      - request
+      - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/userDetails'
+        request:
+          $ref: '#/components/schemas/requestDetails'
+    Seconds:
+      type: number
+      description: Holds the seconds as a decimal value.
+      format: double
+    userDetails:
+      required:
+      - Citizen_id
+      - DOB
+      - NIC
+      - address
+      - district
+      - full_name
+      - gs_division_number
+      - occupation
+      - religion
+      - sex
+      - whetherSriLankan
+      type: object
+      properties:
+        Citizen_id:
+          type: integer
+          format: int64
+        full_name:
+          type: string
+        address:
+          type: string
+        gs_division_number:
+          type: string
+        sex:
+          type: string
+        whetherSriLankan:
+          type: boolean
+        religion:
+          type: string
+        occupation:
+          type: string
+        NIC:
+          type: string
+        district:
+          type: string
+        DOB:
+          $ref: '#/components/schemas/Date'
+    OptionalTimeOfDayFields:
+      type: object
+      properties:
+        hour:
+          type: integer
+          format: int64
+        minute:
+          type: integer
+          format: int64
+        second:
+          $ref: '#/components/schemas/Seconds'
+    Date:
+      allOf:
+      - $ref: '#/components/schemas/DateFields'
+      - $ref: '#/components/schemas/OptionalTimeOfDayFields'
+      - type: object
+        properties:
+          utcOffset:
+            $ref: '#/components/schemas/ZoneOffset'
+    DateFields:
+      required:
+      - day
+      - month
+      - year
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int64
+        month:
+          type: integer
+          format: int64
+        day:
+          type: integer
+          format: int64
+    ZoneOffset:
+      required:
+      - hours
+      - minutes
+      type: object
+      properties:
+        hours:
+          type: integer
+          format: int64
+        minutes:
+          type: integer
+          format: int64
+        seconds:
+          type: number
+          format: double

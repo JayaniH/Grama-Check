@@ -1,0 +1,29 @@
+openapi: 3.0.1
+info:
+  title: IdentityCheck
+  version: 0.1.0
+servers:
+- url: "{server}:{port}/IdentityCheck"
+  variables:
+    server:
+      default: http://localhost
+    port:
+      default: "9090"
+paths:
+  /validateNIC/{NICnumber}:
+    get:
+      operationId: getValidatenicNicnumber
+      parameters:
+      - name: NICnumber
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: boolean
+components: {}

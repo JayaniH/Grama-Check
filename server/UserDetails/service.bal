@@ -96,7 +96,7 @@ public type CombinedUserData record {
 service /userDetails on new http:Listener(9090) {
 
 //to display user details for each user
-resource function get userData/[string NIC]/[string gsDivisionNumber]/[string userID]/[string houseNumber]/[string streetName]/[string areaPostOffice]/[string city]/[string district]() returns CombinedUserData|error {
+resource function get userData/[string NIC]/[string houseNumber]/[string areaPostOffice]/[string city]/[string gsDivisionNumber]/[string streetName]/[string userID]/[string district]() returns CombinedUserData|error {
 
 
     allDetails user = check dbClient->queryRow(

@@ -7,15 +7,15 @@ endpoints:
     port: 9090
     type: REST
     networkVisibility: Public
-    context:  /userDetails/{NIC}/{gsDivisionNumber}/{userID}/{houseNumber}/{streetName}/{areaPostOffice}/{city}/{district}
+    context:  /userDetails
     schemaFilePath: userDetails_openapi.yaml
 
-     - name: all details
-    port: 9090
-    type: REST
-    networkVisibility: Public
-    context: /requestData/{gsDivisionCode}
-    schemaFilePath: userDetails_openapi.yaml
+    #  - name: all details
+    # port: 9090
+    # type: REST
+    # networkVisibility: Public
+    # context: /requestData/{gsDivisionCode}
+    # schemaFilePath: userDetails_openapi.yaml
 
 #     # Version of the endpoint configuration YAML
 # version: 1.0

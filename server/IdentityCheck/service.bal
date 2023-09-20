@@ -20,7 +20,7 @@ final mysql:Client dbClient = check new(
 
 service /IdentityCheck on new http:Listener(9090) {
 
-    resource function get validateNIC/[string NICnumber]/[string gsDivisionNumber]() returns boolean|error {
+    resource function get validateNIC/[string NICnumber]/[string gsDivisionNumber]/[string userID]() returns boolean|error {
 
         boolean isValidated=false;
 
@@ -28,7 +28,7 @@ service /IdentityCheck on new http:Listener(9090) {
         `SELECT EXISTS (
     SELECT *
     FROM Citizen
-    WHERE NIC = ${NICnumber} AND gs_division_number = ${gsDivisionNumber});`
+    WHERE NIC = ${NICnumber} AND gs_division_number = ${gsDivisionNumber} AND userID= ${userID});`
     );
 
          

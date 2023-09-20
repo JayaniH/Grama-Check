@@ -17,14 +17,17 @@ final mysql:Client dbClient = check new(
 public type userDetails record {|
     int Citizen_id;
     string full_name;
-    string address;
+    string house_number;
+    string street_name;
+    string area_post_office;
+    string  city;
     string gs_division_number;
+     string district;
     string sex;
     boolean whetherSriLankan;
     string religion;
     string occupation;
     string NIC;
-    string district;
     time:Date DOB;
   
 |};

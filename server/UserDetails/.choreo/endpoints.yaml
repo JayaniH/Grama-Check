@@ -3,14 +3,14 @@
 
 # # +required List of endpoints to create
 endpoints:
-  - name: police check API
+  - name: user details for gs
     port: 9090
     type: REST
     networkVisibility: Public
     context:  /userDetails/{NIC}/{gsDivisionNumber}/{userID}/{houseNumber}/{streetName}/{areaPostOffice}/{city}/{district}
     schemaFilePath: userDetails_openapi.yaml
 
-     - name: police check API
+     - name: all details
     port: 9090
     type: REST
     networkVisibility: Public

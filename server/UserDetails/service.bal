@@ -108,27 +108,27 @@ resource function get userData/[string NIC]/[string gsDivisionNumber]/[string us
 
     http:Client policeCheckClient = check new (os:getEnv("PoliceCheck_URL"));
     // Sends a `GET` request to the "/criminalData"
-    boolean isCriminal = check policeCheckClient->/criminalData/[NIC];
+    boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC];
 
 
 
     http:Client addressCheckClient = check new (os:getEnv("AdressCheck_URL"));
     // Sends a `GET` request to the "/validateNIC"
-    boolean isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID];
+    boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID];
 
 
         
     http:Client IdentityCheckClient = check new (os:getEnv("IdentityCheck_URL"));
     // Sends a `GET` request to the "/criminalData"
-    boolean isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID];
+    boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID];
 
 
    
     CombinedUserData userData = {
         user : user,
-        isaddressVerified: isIdentityVerified, 
-        isIdentityVerified: isaddressVerified, 
-        isCriminal: isCriminal};
+        isaddressVerified: check isIdentityVerified, 
+        isIdentityVerified: check isaddressVerified, 
+        isCriminal: check isCriminal};
       
     // int citizenID = user.Citizen_id;
     // requestDetails request = check dbClient->queryRow(

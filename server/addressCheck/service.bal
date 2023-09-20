@@ -18,20 +18,19 @@ final mysql:Client dbClient = check new(
 service /AddressCheck on new http:Listener(9090) {
 
 
-    resource function get checkAddress/[string NICnumber]/[string citizenDivisionNumber]/[string gsDivisionNumber]() returns boolean|error {
+    resource function get checkAddress/[string NICnumber]/[string gsDivisionNumber]/[string houseNumber]/[string streetName]/[string areaPostOffice]/[string city]/[string district]() returns boolean|error {
    
          boolean iscorrectAddress=false;
 
-         int validation = check dbClient->queryRow( 
+         int adrress = check dbClient->queryRow( 
         `SELECT EXISTS (
     SELECT *
     FROM Citizen
-    INNER JOIN GramaSewaka ON Citizen.GS_id = GramaSewaka.GS_id
-    WHERE Citizen.NIC = ${NICnumber} AND Citizen.gs_division_number = ${citizenDivisionNumber} AND GramaSewaka.gs_division_number = ${gsDivisionNumber});`
+    WHERE NIC = ${NICnumber} AND gs_division_number = ${gsDivisionNumber} AND house_number=${houseNumber} AND street_name=${streetName} AND  area_post_office=${areaPostOffice} AND city=${city} AND district=${district} );`
     );
 
          
-    if(validation == 0){
+    if(adrress == 0){
         iscorrectAddress = false;
     } else {
         iscorrectAddress = true;

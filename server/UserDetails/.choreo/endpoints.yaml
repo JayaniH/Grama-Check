@@ -2,47 +2,54 @@
 # version: 0.1
 
 # # +required List of endpoints to create
-# endpoints:
-#   - name: police check API
-#     port: 9090
-#     type: REST
-#     networkVisibility: Public
-#     context: /userDetails
-#     schemaFilePath: userDetails_openapi.yaml
-
-    # Version of the endpoint configuration YAML
-version: 1.0
-
-# List of services to create endpoints for
-services:
-  - name: UserDetails
+endpoints:
+  - name: police check API
     port: 9090
+    type: REST
     networkVisibility: Public
+    context:  /userDetails/{NIC}/{gsDivisionNumber}/{userID}/{houseNumber}/{streetName}/{areaPostOffice}/{city}/{district}
     schemaFilePath: userDetails_openapi.yaml
-    endpoints:
-      - name: GetUserDetails
-        type: http:Listener
-        resources:
-          - path: /userDetails/{NIC}/{gsDivisionNumber}/{userID}/{houseNumber}/{streetName}/{areaPostOffice}/{city}/{district}
-            methods:
-              - get
-            response:
-              - status: 200
-                entity: CombinedUserData
-              - status: 500
-                entity: ErrorDetails
 
-      - name: GetRequestData
-        type: http:Listener
-        resources:
-          - path: /requestData/{gsDivisionCode}
-            methods:
-              - get
-            response:
-              - status: 200
-                entity: allDetails[]
-              - status: 500
-                entity: ErrorDetails
+     - name: police check API
+    port: 9090
+    type: REST
+    networkVisibility: Public
+    context: /requestData/{gsDivisionCode}
+    schemaFilePath: userDetails_openapi.yaml
+
+#     # Version of the endpoint configuration YAML
+# version: 1.0
+
+# # List of services to create endpoints for
+# services:
+#   - name: UserDetails
+#     port: 9090
+#     networkVisibility: Public
+#     schemaFilePath: userDetails_openapi.yaml
+#     endpoints:
+#       - name: GetUserDetails
+#         type: http:Listener
+#         resources:
+#           - path: /userDetails/{NIC}/{gsDivisionNumber}/{userID}/{houseNumber}/{streetName}/{areaPostOffice}/{city}/{district}
+#             methods:
+#               - get
+#             response:
+#               - status: 200
+#                 entity: CombinedUserData
+#               - status: 500
+#                 entity: ErrorDetails
+
+#       - name: GetRequestData
+#         type: http:Listener
+#         resources:
+#           - path: /requestData/{gsDivisionCode}
+#             methods:
+#               - get
+#             response:
+#               - status: 200
+#                 entity: allDetails[]
+#               - status: 500
+#                 entity: ErrorDetails
 
 
 

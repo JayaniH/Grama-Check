@@ -3,6 +3,7 @@ import ballerina/time;
 import ballerinax/mysql;
 import ballerinax/mysql.driver as _;
 // import ballerina/sql;
+import ballerina/os;
 
 configurable string USER = ?;
 configurable string PASSWORD = ?;
@@ -16,11 +17,12 @@ final mysql:Client dbClient = check new(
 
 public type userDetails record {|
     int Citizen_id;
+    string userID;
     string full_name;
     string house_number;
     string street_name;
     string area_post_office;
-    string  city;
+    string city;
     string gs_division_number;
      string district;
     string sex;
@@ -56,22 +58,34 @@ type UserNotFound record {|
 |};
 
 public type allDetails record {|
-    int Citizen_id;
+     int Citizen_id;
+    string userID;
     string full_name;
-    string address;
+    string house_number;
+    string street_name;
+    string area_post_office;
+    string city;
     string gs_division_number;
+     string district;
     string sex;
     boolean whetherSriLankan;
     string religion;
     string occupation;
     string NIC;
-    string district;
+    string gs_ID;
     time:Date DOB;
     time:Date requested_date;
     time:Date required_date;
     string request_status;
   
 |};
+
+public type CombinedUserData record {
+    allDetails user;
+    boolean isCriminal;
+    boolean isaddressVerified;
+    boolean isIdentityVerified;
+};
 
 // type CombinedResult record {
     
@@ -82,24 +96,51 @@ public type allDetails record {|
 service /userDetails on new http:Listener(9090) {
 
 //to display user details for each user
-resource function get userData/[string NIC]() returns error|CombinedResult {
+resource function get userData/[string NIC]/[string gsDivisionNumber]/[string userID]/[string houseNumber]/[string streetName]/[string areaPostOffice]/[string city]/[string district]() returns CombinedUserData|error {
 
 
-    userDetails user = check dbClient->queryRow(
-        `SELECT * FROM Citizen WHERE NIC = ${NIC}`
+    allDetails user = check dbClient->queryRow(
+        `SELECT Citizen.*,Requests.requested_date,Requests.required_date, Requests.request_status
+        FROM Citizen 
+        JOIN Requests ON Citizen.Citizen_id = Requests.Citizen_id 
+         WHERE NIC = ${NIC}`
     );
 
-    int citizenID = user.Citizen_id;
-    requestDetails request = check dbClient->queryRow(
-         `SELECT * FROM Requests WHERE Citizen_id = ${citizenID}`
-    );
+    http:Client policeCheckClient = check new (os:getEnv("PoliceCheck_URL"));
+    // Sends a `GET` request to the "/criminalData"
+    boolean isCriminal = check policeCheckClient->/criminalData/[NIC];
 
-     CombinedResult Result = {
-        user: user,
-        request: request
-    };
 
-    return Result;
+
+    http:Client addressCheckClient = check new (os:getEnv("AdressCheck_URL"));
+    // Sends a `GET` request to the "/validateNIC"
+    boolean isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID];
+
+
+        
+    http:Client IdentityCheckClient = check new (os:getEnv("IdentityCheck_URL"));
+    // Sends a `GET` request to the "/criminalData"
+    boolean isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID];
+
+
+   
+    CombinedUserData userData = {
+        user : user,
+        isaddressVerified: isIdentityVerified, 
+        isIdentityVerified: isaddressVerified, 
+        isCriminal: isCriminal};
+      
+    // int citizenID = user.Citizen_id;
+    // requestDetails request = check dbClient->queryRow(
+    //      `SELECT * FROM Requests WHERE Citizen_id = ${citizenID}`
+    // );
+
+    //  CombinedResult Result = {
+    //     user: user,
+    //     request: request
+    // };
+
+    return userData;
 }
 
 //get all requests data for the relavant gs
@@ -120,6 +161,8 @@ WHERE gs_division_number = ${gsDivisionCode};`
     check resultStream.close();
     return citizenRequests;
 }
+
+// PoliceCheck_URL
 
 // resource function post userRequestDetails/[string NIC]() returns error|CombinedResult {
 

@@ -10,28 +10,63 @@ servers:
     port:
       default: "9090"
 paths:
-  /userData/{NIC}:
+  /userData/{NIC}/{gsDivisionNumber}/{userID}/{houseNumber}/{streetName}/{areaPostOffice}/{city}/{district}:
     get:
-      operationId: getUserdataNic
+      operationId: getUserdataNicGsdivisionnumberUseridHousenumberStreetnameAreapostofficeCityDistrict
       parameters:
       - name: NIC
         in: path
         required: true
         schema:
           type: string
+      - name: gsDivisionNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: houseNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: streetName
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: areaPostOffice
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: city
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: district
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CombinedUserData'
         "500":
           description: Internal server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorPayload'
-        "200":
-          description: Ok
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CombinedResult'
   /requestData/{gsDivisionCode}:
     get:
       operationId: getRequestdataGsdivisioncode
@@ -58,6 +93,68 @@ paths:
                 $ref: '#/components/schemas/ErrorPayload'
 components:
   schemas:
+    allDetails:
+      required:
+      - Citizen_id
+      - DOB
+      - NIC
+      - area_post_office
+      - city
+      - district
+      - full_name
+      - gs_ID
+      - gs_division_number
+      - house_number
+      - occupation
+      - religion
+      - request_status
+      - requested_date
+      - required_date
+      - sex
+      - street_name
+      - userID
+      - whetherSriLankan
+      type: object
+      properties:
+        Citizen_id:
+          type: integer
+          format: int64
+        userID:
+          type: string
+        full_name:
+          type: string
+        house_number:
+          type: string
+        street_name:
+          type: string
+        area_post_office:
+          type: string
+        city:
+          type: string
+        gs_division_number:
+          type: string
+        district:
+          type: string
+        sex:
+          type: string
+        whetherSriLankan:
+          type: boolean
+        religion:
+          type: string
+        occupation:
+          type: string
+        NIC:
+          type: string
+        gs_ID:
+          type: string
+        DOB:
+          $ref: '#/components/schemas/Date'
+        requested_date:
+          $ref: '#/components/schemas/Date'
+        required_date:
+          $ref: '#/components/schemas/Date'
+        request_status:
+          type: string
     ErrorPayload:
       type: object
       properties:
@@ -80,126 +177,26 @@ components:
           type: integer
           description: Relevant HTTP status code
           format: int32
-    allDetails:
+    CombinedUserData:
       required:
-      - Citizen_id
-      - DOB
-      - NIC
-      - address
-      - district
-      - full_name
-      - gs_division_number
-      - occupation
-      - religion
-      - request_status
-      - requested_date
-      - required_date
-      - sex
-      - whetherSriLankan
-      type: object
-      properties:
-        Citizen_id:
-          type: integer
-          format: int64
-        full_name:
-          type: string
-        address:
-          type: string
-        gs_division_number:
-          type: string
-        sex:
-          type: string
-        whetherSriLankan:
-          type: boolean
-        religion:
-          type: string
-        occupation:
-          type: string
-        NIC:
-          type: string
-        district:
-          type: string
-        DOB:
-          $ref: '#/components/schemas/Date'
-        requested_date:
-          $ref: '#/components/schemas/Date'
-        required_date:
-          $ref: '#/components/schemas/Date'
-        request_status:
-          type: string
-    requestDetails:
-      required:
-      - Citizen_id
-      - request_id
-      - request_status
-      - requested_date
-      - required_date
-      type: object
-      properties:
-        Citizen_id:
-          type: integer
-          format: int64
-        request_id:
-          type: integer
-          format: int64
-        requested_date:
-          $ref: '#/components/schemas/Date'
-        required_date:
-          $ref: '#/components/schemas/Date'
-        request_status:
-          type: string
-    CombinedResult:
-      required:
-      - request
+      - isCriminal
+      - isIdentityVerified
+      - isaddressVerified
       - user
       type: object
       properties:
         user:
-          $ref: '#/components/schemas/userDetails'
-        request:
-          $ref: '#/components/schemas/requestDetails'
+          $ref: '#/components/schemas/allDetails'
+        isCriminal:
+          type: boolean
+        isaddressVerified:
+          type: boolean
+        isIdentityVerified:
+          type: boolean
     Seconds:
       type: number
       description: Holds the seconds as a decimal value.
       format: double
-    userDetails:
-      required:
-      - Citizen_id
-      - DOB
-      - NIC
-      - address
-      - district
-      - full_name
-      - gs_division_number
-      - occupation
-      - religion
-      - sex
-      - whetherSriLankan
-      type: object
-      properties:
-        Citizen_id:
-          type: integer
-          format: int64
-        full_name:
-          type: string
-        address:
-          type: string
-        gs_division_number:
-          type: string
-        sex:
-          type: string
-        whetherSriLankan:
-          type: boolean
-        religion:
-          type: string
-        occupation:
-          type: string
-        NIC:
-          type: string
-        district:
-          type: string
-        DOB:
-          $ref: '#/components/schemas/Date'
     OptionalTimeOfDayFields:
       type: object
       properties:

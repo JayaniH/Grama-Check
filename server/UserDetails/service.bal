@@ -106,19 +106,35 @@ resource function get userData/[string NIC]/[string houseNumber]/[string areaPos
          WHERE NIC = ${NIC}`
     );
 
-    http:Client policeCheckClient = check new (os:getEnv("PoliceCheck_URL"));
+    // http:Client policeCheckClient = check new (os:getEnv("PoliceCheck_URL"));
+    // // Sends a `GET` request to the "/criminalData"
+    // boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC];
+
+
+
+    // http:Client addressCheckClient = check new (os:getEnv("AdressCheck_URL"));
+    // // Sends a `GET` request to the "/validateNIC"
+    // boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID];
+
+
+        
+    // http:Client IdentityCheckClient = check new (os:getEnv("IdentityCheck_URL"));
+    // // Sends a `GET` request to the "/criminalData"
+    // boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID];
+
+    http:Client policeCheckClient = check new ("http://police-check-service-dew-3706729527:9090/policeCheck");
     // Sends a `GET` request to the "/criminalData"
     boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC];
 
 
 
-    http:Client addressCheckClient = check new (os:getEnv("AdressCheck_URL"));
+    http:Client addressCheckClient = check new ("http://address-check-service-tzl-2989585241:9090/AddressCheck");
     // Sends a `GET` request to the "/validateNIC"
     boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID];
 
 
         
-    http:Client IdentityCheckClient = check new (os:getEnv("IdentityCheck_URL"));
+    http:Client IdentityCheckClient = check new ("http://identity-check-service-ogo-588361154:9090/IdentityCheck");
     // Sends a `GET` request to the "/criminalData"
     boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID];
 

@@ -82,6 +82,7 @@ public type allDetails record {|
     string NIC;
     string gs_ID;
     time:Date DOB;
+    int Request_id;
     time:Date requested_date;
     time:Date required_date;
     string request_status;
@@ -95,9 +96,6 @@ public type CombinedUserData record {
     boolean isIdentityVerified;
 };
 
-// type CombinedResult record {
-    
-// };
 
 # A service representing a network-accessible API
 # bound to port `9090`.
@@ -108,7 +106,7 @@ resource function get userData/[string NIC]/[string houseNumber]/[string areaPos
 
 
     allDetails user = check dbClient->queryRow(
-        `SELECT Citizen.*,Requests.requested_date,Requests.required_date, Requests.request_status
+        `SELECT Citizen.*,Request.Request_id,Requests.requested_date,Requests.required_date, Requests.request_status
         FROM Citizen 
         JOIN Requests ON Citizen.Citizen_id = Requests.Citizen_id 
          WHERE NIC = ${NIC}`
@@ -199,6 +197,17 @@ resource function post userRequestDetails/[string NIC](@http:Payload requestDeta
     return <http:Ok>{};
 }
 
+resource function put updateStatus/[string Request_id]() returns error|http:Ok {
+
+    _ = check dbClient->execute(
+        `UPDATE Requests SET request_status="Completed" WHERE request_id=${Request_id}`
+    );
+
+  
+    
+
+    return <http:Ok>{};
+}
 
 }
 

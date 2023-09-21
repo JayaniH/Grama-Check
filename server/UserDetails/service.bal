@@ -35,17 +35,25 @@ public type userDetails record {|
 |};
 
 public type requestDetails record {|
+    // int Citizen_id;
+    time:Date requested_date;
+    time:Date required_date;
+    // string request_status;
+    string reason;
+|};
+
+public type requestPostDetails record {|
     int Citizen_id;
-    int request_id;
     time:Date requested_date;
     time:Date required_date;
     string request_status;
+    string reason;
 |};
 
-public type CombinedResult record {
-    userDetails user;
-    requestDetails request;
-};
+// public type CombinedResult record {
+//     userDetails user;
+//     requestDetails request;
+// };
 
 type ErrorDetails record {
     string message;
@@ -146,15 +154,6 @@ resource function get userData/[string NIC]/[string houseNumber]/[string areaPos
         isIdentityVerified: check isaddressVerified, 
         isCriminal: check isCriminal};
       
-    // int citizenID = user.Citizen_id;
-    // requestDetails request = check dbClient->queryRow(
-    //      `SELECT * FROM Requests WHERE Citizen_id = ${citizenID}`
-    // );
-
-    //  CombinedResult Result = {
-    //     user: user,
-    //     request: request
-    // };
 
     return userData;
 }
@@ -178,43 +177,28 @@ WHERE gs_division_number = ${gsDivisionCode};`
     return citizenRequests;
 }
 
-// PoliceCheck_URL
-
-// resource function post userRequestDetails/[string NIC]() returns error|CombinedResult {
-
-//     string citizen = check dbClient->queryRow(
-//         `SELECT Citizen_id FROM Citizen WHERE NIC = ${NIC}`
-//     );
-//     // Parse the request body as JSON to get the dictionary
-//         map<json> requestDetails = check req.getJsonPayload();
 
 
-//     // if(citizen == " "){
-//     //     _ = check dbClient->execute(`
-//     //      INSERT INTO Employees (employee_id, first_name, last_name, email, phone,
-//     //                            hire_date, manager_id, job_title)
-//     //     VALUES (${emp.employee_id}, ${emp.first_name}, ${emp.last_name},  
-//     //             ${emp.email}, ${emp.phone}, ${emp.hire_date}, ${emp.manager_id},
-//     //             ${emp.job_title})`);
-//     // }
+resource function post userRequestDetails/[string NIC](@http:Payload requestDetails request) returns error|http:Ok {
+
+    string citizenID = check dbClient->queryRow(
+        `SELECT Citizen_id FROM Citizen WHERE NIC = ${NIC}`
+    );
+
+    time:Date requestedDate = request.requested_date;
+     time:Date requireddDate = request.required_date;
+     string reason = request.reason;
 
 
-//     userDetails user = check dbClient->queryRow(
-//         `SELECT * FROM Citizen WHERE NIC = ${NIC}`
-//     );
+     _ = check dbClient->execute(`
+         INSERT INTO Requests (requested_date, required_date, request_status, reason, Citizen_id)
+        VALUES (${requestedDate}, ${requireddDate},"Pending", ${reason},${citizenID})`);
+  
+    
 
-//     int citizenID = user.Citizen_id;
-//     requestDetails request = check dbClient->queryRow(
-//          `SELECT * FROM Requests WHERE Citizen_id = ${citizenID}`
-//     );
+    return <http:Ok>{};
+}
 
-//      CombinedResult Result = {
-//         user: user,
-//         request: request
-//     };
-
-//     return Result;
-// }
 
 }
 

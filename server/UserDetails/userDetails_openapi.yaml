@@ -91,6 +91,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorPayload'
+  /userRequestDetails/{NIC}:
+    post:
+      operationId: postUserrequestdetailsNic
+      parameters:
+      - name: NIC
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestDetails'
+      responses:
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload'
+        "200":
+          description: Ok
 components:
   schemas:
     allDetails:
@@ -193,6 +216,19 @@ components:
           type: boolean
         isIdentityVerified:
           type: boolean
+    requestDetails:
+      required:
+      - reason
+      - requested_date
+      - required_date
+      type: object
+      properties:
+        requested_date:
+          $ref: '#/components/schemas/Date'
+        required_date:
+          $ref: '#/components/schemas/Date'
+        reason:
+          type: string
     Seconds:
       type: number
       description: Holds the seconds as a decimal value.

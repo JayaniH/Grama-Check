@@ -3,7 +3,7 @@ import ballerina/time;
 import ballerinax/mysql;
 import ballerinax/mysql.driver as _;
 // import ballerina/sql;
-import ballerina/os;
+// import ballerina/os;
 
 configurable string USER = ?;
 configurable string PASSWORD = ?;

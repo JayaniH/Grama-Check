@@ -6,6 +6,6 @@ endpoints:
   - name: Adress check API
     port: 9090
     type: REST
-    networkVisibility: Public
+    networkVisibility: Organization
     context: /AddressCheck
     schemaFilePath: AddressCheck_openapi.yaml

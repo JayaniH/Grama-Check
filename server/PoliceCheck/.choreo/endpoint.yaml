@@ -6,6 +6,6 @@ endpoints:
   - name: Police Check API
     port: 9090
     type: REST
-    networkVisibility: Public
+    networkVisibility: Organization
     context: /policeCheck
     schemaFilePath: PoliceCheck_openapi.yaml

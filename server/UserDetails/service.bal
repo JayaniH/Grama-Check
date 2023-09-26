@@ -2,6 +2,7 @@ import ballerina/http;
 import ballerina/time;
 import ballerinax/mysql;
 import ballerinax/mysql.driver as _;
+import ballerina/log;
 
 // import ballerina/sql;
 // import ballerina/os;
@@ -11,6 +12,15 @@ configurable string PASSWORD = ?;
 configurable string HOST = ?;
 configurable int PORT = ?;
 configurable string DATABASE = ?;
+
+configurable string clientIDIdentityCheck = ?;
+configurable string clientSecretIdentityCheck = ?;
+
+configurable string clientIDPoliceCheck = ?;
+configurable string clientSecretPoliceCheck = ?;
+
+configurable string clientIDAdressCheck = ?;
+configurable string clientSecretAddressCheck = ?;
 
 final mysql:Client dbClient = check new (
     host = HOST, user = USER, password = PASSWORD, port = PORT, database = "GramaCheck"
@@ -109,50 +119,34 @@ service /userDetails on new http:Listener(9090) {
          WHERE NIC = ${NIC}`
     );
 
-        // http:Client policeCheckClient = check new (os:getEnv("PoliceCheck_URL"));
-        // // Sends a `GET` request to the "/criminalData"
-        // boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC];
+        string accessTokenPoliceChek =  check getAccessToken(clientIDPoliceCheck,clientSecretPoliceCheck);
+        string accessTokenIdentityChek =  check getAccessToken(clientIDIdentityCheck,clientSecretIdentityCheck);
+        string accessTokenAddressChek =  check getAccessToken(clientIDAdressCheck,clientSecretAddressCheck);
 
-        // http:Client addressCheckClient = check new (os:getEnv("AdressCheck_URL"));
-        // // Sends a `GET` request to the "/validateNIC"
-        // boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID];
 
-        // http:Client IdentityCheckClient = check new (os:getEnv("IdentityCheck_URL"));
-        // // Sends a `GET` request to the "/criminalData"
-        // boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID];
-
-        // http:Client policeCheckClient = check new ("http://police-check-service-dew-3706729527:9090/policeCheck");
-        // // Sends a `GET` request to the "/criminalData"
-        // boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC];
-
-        // http:Client addressCheckClient = check new ("http://address-check-service-tzl-2989585241:9090/AddressCheck");
-        // // Sends a `GET` request to the "/validateNIC"
-        // boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID];
-
-        // http:Client IdentityCheckClient = check new ("http://identity-check-service-ogo-588361154:9090/IdentityCheck");
-        // // Sends a `GET` request to the "/criminalData"
-        // boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID];
 
         http:Client policeCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-dev.e1-us-east-azure.choreoapis.dev/xqfp/police-check-api/police-check-api-46e/v1");
         // Sends a `GET` request to the "/criminalData"
-        boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC];
+        boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC](headers = {accessTokenPoliceChek});
 
         http:Client addressCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-prod.e1-us-east-azure.choreoapis.dev/xqfp/adress-check-service/adress-check-api-186/v1");
         // Sends a `GET` request to the "/validateNIC"
-        boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID];
+        boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID](headers = {accessTokenAddressChek});
 
         http:Client IdentityCheckClient = check new ("http://identity-check-service-ogo-588361154:9090/IdentityCheck");
         // Sends a `GET` request to the "/criminalData"
-        boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID];
+        boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID](headers = {accessTokenIdentityChek});
 
+        // Create CombinedUserData record
         CombinedUserData userData = {
             user: user,
             isaddressVerified: check isIdentityVerified,
             isIdentityVerified: check isaddressVerified,
             isCriminal: check isCriminal
         };
-
         return userData;
+
+     
     }
 
     //get all requests data for the relavant gs
@@ -179,14 +173,6 @@ WHERE gs_division_number = ${gsDivisionCode};`
         `SELECT Citizen_id FROM Citizen WHERE NIC = ${NIC}`
     );
 
-        // time:Date requestedDate = request.requested_date;
-        //  time:Date requireddDate = request.required_date;
-        //  string reasons = request.reason;
-
-        //    _ = check dbClient->execute(`
-        //  INSERT INTO Requests (requested_date, required_date, request_status, reason, Citizen_id)
-        // VALUES (${request.requested_date}, ${request.required_date},"Pending", ${request.reason},${citizenID})`);
-
         _ = check dbClient->execute(`
         INSERT INTO Requests (requested_date, required_date, request_status, Citizen_id)
         VALUES (${request.requested_date}, ${request.required_date},"Pending",${citizenID})`);
@@ -203,5 +189,27 @@ WHERE gs_division_number = ${gsDivisionCode};`
         return <http:Ok>{};
     }
 
+}
+
+function getAccessToken(string clientId,string clientSecret) returns string|error {
+    string tokenEndpoint = "https://api.asgardeo.io/t/orgnization1/oauth2/token";
+
+
+    string credentialsBase64 = (clientId + ":" + clientSecret).toBytes().toBase64();
+    string payload = "grant_type=client_credentials";
+    map<string> headers = {
+        "Authorization": "Basic " + credentialsBase64,
+        "Content-Type": "application/x-www-form-urlencoded"
+    };
+
+    http:Client tokenClient = check new (tokenEndpoint);
+    http:Response tokenResponse = check tokenClient->post("", payload, headers);
+
+    json responseJson = check tokenResponse.getJsonPayload();
+    string accessToken = check responseJson.access_token;
+
+    log:printInfo("Successfully retrieved the new access token.");
+
+    return accessToken;
 }
 

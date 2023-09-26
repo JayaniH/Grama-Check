@@ -10,11 +10,21 @@ servers:
     port:
       default: "9090"
 paths:
-  /validateNIC/{NICnumber}:
+  /validateNIC/{NICnumber}/{gsDivisionNumber}/{userID}:
     get:
-      operationId: getValidatenicNicnumber
+      operationId: getValidatenicNicnumberGsdivisionnumberUserid
       parameters:
       - name: NICnumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: gsDivisionNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: userID
         in: path
         required: true
         schema:
@@ -26,4 +36,33 @@ paths:
             application/json:
               schema:
                 type: boolean
-components: {}
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload'
+components:
+  schemas:
+    ErrorPayload:
+      type: object
+      properties:
+        reason:
+          type: string
+          description: Reason phrase
+        path:
+          type: string
+          description: Request path
+        method:
+          type: string
+          description: Method type of the request
+        message:
+          type: string
+          description: Error message
+        timestamp:
+          type: string
+          description: Timestamp of the error
+        status:
+          type: integer
+          description: Relevant HTTP status code
+          format: int32

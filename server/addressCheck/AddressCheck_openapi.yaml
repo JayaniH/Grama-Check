@@ -10,21 +10,41 @@ servers:
     port:
       default: "9090"
 paths:
-  /checkAddress/{NICnumber}/{citizenDivisionNumber}/{gsDivisionNumber}:
+  /checkAddress/{gsDivisionNumber}/{houseNumber}/{streetName}/{areaPostOffice}/{city}/{district}/{userID}:
     get:
-      operationId: getCheckaddressNicnumberCitizendivisionnumberGsdivisionnumber
+      operationId: getCheckaddressGsdivisionnumberHousenumberStreetnameAreapostofficeCityDistrictUserid
       parameters:
-      - name: NICnumber
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: citizenDivisionNumber
-        in: path
-        required: true
-        schema:
-          type: string
       - name: gsDivisionNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: houseNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: streetName
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: areaPostOffice
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: city
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: district
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: userID
         in: path
         required: true
         schema:

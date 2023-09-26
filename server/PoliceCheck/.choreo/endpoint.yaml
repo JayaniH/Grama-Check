@@ -3,9 +3,9 @@ version: 0.1
 
 # +required List of endpoints to create
 endpoints:
-  - name: police check API
+  - name: Police Check API
     port: 9090
     type: REST
-    networkVisibility: Organization
+    networkVisibility: Public
     context: /policeCheck
-    schemaFilePath: policeCheck_openapi.yaml
+    schemaFilePath: PoliceCheck_openapi.yaml

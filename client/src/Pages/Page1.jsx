@@ -1,32 +1,49 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthContext } from "@asgardeo/auth-react";
 import { Navigate } from 'react-router-dom';
 
 function Page1() {
-    const { basicUserInfo } = useAuthContext();
+  const { basicUserInfo, signOut ,getDecodedIDToken} = useAuthContext();
+  const [redirectTo, setRedirectTo] = useState(null);
 
-    useEffect(() => {
-        // Check if basicUserInfo is available and user has a group
-        if (basicUserInfo && basicUserInfo.groups && basicUserInfo.groups.length > 0) {
-          const userGroup = basicUserInfo.groups[0]; // Assuming the user has one group
-    
-          // Redirect based on the user's group
+  // useEffect(() => {
+    async function checkUserGroup() {
+      try {
+        const decodedIDToken = await getDecodedIDToken();
+        console.log(decodedIDToken);
+
+        if (decodedIDToken.groups && decodedIDToken.groups.length > 0) {
+          const userGroup = decodedIDToken.groups[0]; // Assuming the user has one group
+
           if (userGroup === 'Citizen') {
             // Redirect to the CitizenHome page if the user is a Citizen
-            return <Navigate to="/CitizenHome" />;
+            setRedirectTo("/CitizenHome");
           } else if (userGroup === 'GramaSevaka') {
             // Redirect to the GSHome page if the user is a GramaSevaka
-            return <Navigate to="/GSHome" />;
+            setRedirectTo("/GSHome");
           }
         }
-      }, [basicUserInfo]);
-    
-      return (
-        <div>
-          {/* Your component content */}
-        </div>
-      );
+      } catch (error) {
+        // Handle the error
+        console.error(error);
+      }
     }
-    
 
-export default Page1
+    checkUserGroup();
+  // }, []);
+
+  if (redirectTo) {
+    return <Navigate to={redirectTo} />;
+  }
+
+  return (
+    <div>
+      <p>{basicUserInfo}</p>
+      <button onClick={() => signOut()}>Logout</button> <br/>
+      {/* <button onClick={()=>checkUserGroup() }></button> */}
+      {/* Your component content */}
+    </div>
+  );
+}
+
+export default Page1;

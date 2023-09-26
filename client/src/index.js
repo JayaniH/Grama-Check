@@ -9,12 +9,12 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const config = {
 
-  signInRedirectURL: "http://localhost:3000/adminHome",
+  signInRedirectURL: "http://localhost:3000/Page1",
   signOutRedirectURL: "http://localhost:3000/homePage",
   clientID: "YKzbzLsh2co9_mPOJqf1B4HB0Dga",
   baseUrl: "https://api.asgardeo.io/t/organization123",
 
-  scope: [ "openid", "address", "email","phone" ,"profile"] 
+  scope: [ "openid", "address", "email","phone" ,"profile","groups"] 
 
 }
 

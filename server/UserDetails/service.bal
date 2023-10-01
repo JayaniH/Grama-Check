@@ -13,8 +13,8 @@ configurable string HOST = ?;
 configurable int PORT = ?;
 configurable string DATABASE = ?;
 
-configurable string clientIDIdentityCheck = ?;
-configurable string clientSecretIdentityCheck = ?;
+// configurable string clientIDIdentityCheck = ?;
+// configurable string clientSecretIdentityCheck = ?;
 
 // configurable string clientIDPoliceCheck = ?;
 // configurable string clientSecretPoliceCheck = ?;
@@ -122,7 +122,7 @@ service /userDetails on new http:Listener(9090) {
     );
 
       //  string accessTokenPoliceChek =  check getAccessToken(clientIDPoliceCheck,clientSecretPoliceCheck);
-        string accessTokenIdentityChek =  check getAccessToken(clientIDIdentityCheck,clientSecretIdentityCheck);
+       // string accessTokenIdentityChek =  check getAccessToken(clientIDIdentityCheck,clientSecretIdentityCheck);
         string accessTokenAddressChek =  check getAccessToken(clientIDAdressCheck,clientSecretAddressCheck);
 
 
@@ -131,18 +131,19 @@ service /userDetails on new http:Listener(9090) {
         // // Sends a `GET` request to the "/criminalData"
         // boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC](headers = {accessTokenPoliceChek});
 
-        http:Client addressCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-prod.e1-us-east-azure.choreoapis.dev/xqfp/adress-check-service/adress-check-api-186/v1");
+        http:Client addressCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-prod.e1-us-east-azure.choreoapis.dev/xqfp/address-check-api/adress-check-api-186/v1");
         // Sends a `GET` request to the "/validateNIC"
         boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID](headers = {accessTokenAddressChek});
 
-        http:Client IdentityCheckClient = check new ("http://identity-check-service-ogo-588361154:9090/IdentityCheck");
+     //   http:Client IdentityCheckClient = check new ("http://identity-check-service-ogo-588361154:9090/IdentityCheck");
         // Sends a `GET` request to the "/criminalData"
-        boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID](headers = {accessTokenIdentityChek});
+    //    boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID](headers = {accessTokenIdentityChek});
 
         // Create CombinedUserData record
         CombinedUserData userData = {
             user: user,
-            isaddressVerified: check isIdentityVerified,
+            // isaddressVerified: check isIdentityVerified,
+            isaddressVerified: true,
             isIdentityVerified: check isaddressVerified,
             // isCriminal: check isCriminal
              isCriminal: true
@@ -177,11 +178,13 @@ WHERE gs_division_number = ${gsDivisionCode};`
     );
 
         _ = check dbClient->execute(`
-        INSERT INTO Requests (requested_date, required_date, request_status, Citizen_id)
-        VALUES (${request.requested_date}, ${request.required_date},"Pending",${citizenID})`);
+        INSERT INTO Requests (requested_date, required_date, request_status, reason, Citizen_id)
+        VALUES (${request.requested_date}, ${request.required_date},"Pending",${request.reason},${citizenID})`);
 
         return <http:Ok>{};
     }
+
+    
 
     resource function put updateStatus/[string Request_id]() returns error|http:Ok {
 

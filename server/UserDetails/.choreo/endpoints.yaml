@@ -3,7 +3,7 @@
 
 # # +required List of endpoints to create
 endpoints:
-  - name: user details for gs
+  - name: user details
     port: 9090
     type: REST
     networkVisibility: Public

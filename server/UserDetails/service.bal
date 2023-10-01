@@ -13,11 +13,11 @@ configurable string HOST = ?;
 configurable int PORT = ?;
 configurable string DATABASE = ?;
 
-configurable string clientIDIdentityCheck = ?;
-configurable string clientSecretIdentityCheck = ?;
+// configurable string clientIDIdentityCheck = ?;
+// configurable string clientSecretIdentityCheck = ?;
 
-configurable string clientIDPoliceCheck = ?;
-configurable string clientSecretPoliceCheck = ?;
+// configurable string clientIDPoliceCheck = ?;
+// configurable string clientSecretPoliceCheck = ?;
 
 configurable string clientIDAdressCheck = ?;
 configurable string clientSecretAddressCheck = ?;
@@ -91,10 +91,12 @@ public type allDetails record {|
     string NIC;
     string gs_ID;
     time:Date DOB;
-    int Request_id;
+    int request_id;
     time:Date requested_date;
     time:Date required_date;
     string request_status;
+    string reason;
+
 
 |};
 
@@ -113,36 +115,38 @@ service /userDetails on new http:Listener(9090) {
     resource function get userData/[string NIC]/[string houseNumber]/[string areaPostOffice]/[string city]/[string gsDivisionNumber]/[string streetName]/[string userID]/[string district]() returns CombinedUserData|error {
 
         allDetails user = check dbClient->queryRow(
-        `SELECT Citizen.*,Request.Request_id,Requests.requested_date,Requests.required_date, Requests.request_status
+        `SELECT Citizen.*,Requests.request_id,Requests.requested_date,Requests.required_date, Requests.request_status,Requests.reason
         FROM Citizen 
         JOIN Requests ON Citizen.Citizen_id = Requests.Citizen_id 
          WHERE NIC = ${NIC}`
     );
 
-        string accessTokenPoliceChek =  check getAccessToken(clientIDPoliceCheck,clientSecretPoliceCheck);
-        string accessTokenIdentityChek =  check getAccessToken(clientIDIdentityCheck,clientSecretIdentityCheck);
+      //  string accessTokenPoliceChek =  check getAccessToken(clientIDPoliceCheck,clientSecretPoliceCheck);
+       // string accessTokenIdentityChek =  check getAccessToken(clientIDIdentityCheck,clientSecretIdentityCheck);
         string accessTokenAddressChek =  check getAccessToken(clientIDAdressCheck,clientSecretAddressCheck);
 
 
 
-        http:Client policeCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-dev.e1-us-east-azure.choreoapis.dev/xqfp/police-check-api/police-check-api-46e/v1");
-        // Sends a `GET` request to the "/criminalData"
-        boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC](headers = {accessTokenPoliceChek});
+        // http:Client policeCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-dev.e1-us-east-azure.choreoapis.dev/xqfp/police-check-api/police-check-api-46e/v1");
+        // // Sends a `GET` request to the "/criminalData"
+        // boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC](headers = {accessTokenPoliceChek});
 
-        http:Client addressCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-prod.e1-us-east-azure.choreoapis.dev/xqfp/adress-check-service/adress-check-api-186/v1");
+        http:Client addressCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-prod.e1-us-east-azure.choreoapis.dev/xqfp/address-check-api/adress-check-api-186/v1");
         // Sends a `GET` request to the "/validateNIC"
         boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID](headers = {accessTokenAddressChek});
 
-        http:Client IdentityCheckClient = check new ("http://identity-check-service-ogo-588361154:9090/IdentityCheck");
+     //   http:Client IdentityCheckClient = check new ("http://identity-check-service-ogo-588361154:9090/IdentityCheck");
         // Sends a `GET` request to the "/criminalData"
-        boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID](headers = {accessTokenIdentityChek});
+    //    boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID](headers = {accessTokenIdentityChek});
 
         // Create CombinedUserData record
         CombinedUserData userData = {
             user: user,
-            isaddressVerified: check isIdentityVerified,
+            // isaddressVerified: check isIdentityVerified,
+            isaddressVerified: true,
             isIdentityVerified: check isaddressVerified,
-            isCriminal: check isCriminal
+            // isCriminal: check isCriminal
+             isCriminal: true
         };
         return userData;
 
@@ -174,11 +178,13 @@ WHERE gs_division_number = ${gsDivisionCode};`
     );
 
         _ = check dbClient->execute(`
-        INSERT INTO Requests (requested_date, required_date, request_status, Citizen_id)
-        VALUES (${request.requested_date}, ${request.required_date},"Pending",${citizenID})`);
+        INSERT INTO Requests (requested_date, required_date, request_status, reason, Citizen_id)
+        VALUES (${request.requested_date}, ${request.required_date},"Pending",${request.reason},${citizenID})`);
 
         return <http:Ok>{};
     }
+
+    
 
     resource function put updateStatus/[string Request_id]() returns error|http:Ok {
 

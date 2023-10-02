@@ -12,6 +12,8 @@ import Dialog from '@mui/material/Dialog'; // Import Material-UI Dialog componen
 import DialogActions from '@mui/material/DialogActions'; // Import DialogActions for buttons
 import DialogContent from '@mui/material/DialogContent'; // Import DialogContent for message content
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { AuthProvider, useAuthContext } from "@asgardeo/auth-react";
 
 
 
@@ -29,7 +31,49 @@ const style = {
 };
 
 const ViewRequest = () => {
+  const { getAccessToken } = useAuthContext();
+
+ 
   const [open, setOpen] = useState(false);
+  const [requestData, setRequestData] = useState([]);
+
+  const gsDivisionCode = "234B";
+
+
+  // useEffect(() => {
+  //   const accessToken = await getAccessToken();
+  //   axios.get(`https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-dev.e1-us-east-azure.choreoapis.dev/xqfp/user-details-service/user-details-617/v1.0/requestData/${gsDivisionCode},{
+  //     headers: {
+  //       'Authorization': `Bearer ${accessToken}`,
+  //     },
+  //   }`).then((response) => {
+  //     setRequestData(response.data.citizenRequests);
+  //   });
+  // }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const accessToken = await getAccessToken();
+
+  //       const headers = {
+  //         'Authorization': `Bearer ${accessToken}`,
+  //       };
+
+  //       const response = await axios.get(
+  //         `https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-dev.e1-us-east-azure.choreoapis.dev/xqfp/user-details-service/user-details-617/v1.0/requestData/${gsDivisionCode}`,
+  //         { headers }
+  //       );
+
+  //       setRequestData(response.data.citizenRequests);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [getAccessToken]);
+
+  // console.log(requestData);
 
   // Function to open the modal
   const handleOpen = () => {

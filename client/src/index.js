@@ -40,20 +40,7 @@ function AuthRedirect() {
   return null;
 }
 
-// const config = {
-//   signInRedirectURL: "http://localhost:3000/Page1",
-//   signOutRedirectURL: "http://localhost:3000/homePage",
-//   clientID: "KKH0Q5eG8ecfgHh2gEto51dLyDUa",
-//   baseUrl: "https://api.asgardeo.io/t/orgnization1",
-//   scope: ["openid", "address", "email", "phone", "profile", "groups"]
-// }
-// const config = {
-//   signInRedirectURL: window.config.signInRedirectURL,
-//   signOutRedirectURL: window.config.signOutRedirectURL,
-//   clientID: window.config.clientID,
-//   baseUrl: window.config.baseUrl,
-//   scope: ["openid", "address", "email", "phone", "profile", "groups"]
-// }
+
 
 const config = {
   GramaCheckApiUrl:

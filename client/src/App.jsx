@@ -9,6 +9,7 @@ import AdminHome  from './Pages/Admin/AdminHome';
 import GSHome from './Pages/GS/GSHome';
 import CreateGS from './Pages/Admin/CreateGS';
 import CitizenHome from './Pages/Citizen/CitizenHome';
+import CheckStatus1 from './Pages/Citizen/CheckStatus1'; 
 import Page1 from './Pages/Page1';
 import { BrowserRouter as Router, Route, Routes  } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -27,6 +28,7 @@ function App() {
         <Route path='/letter' element={<Letter/>}/>
         <Route path='/applyRequest' element={<ApplyRequest/>} />
         <Route path='/applyForm' element={<ApplyForm/>}/>
+        <Route path='/checkStatus1' element={<CheckStatus1/>}/>1
         <Route path='/adminHome' element={<AdminHome/>}/>
         <Route path='/CreateGS' element={<CreateGS/>}/>
         <Route path='/GSHome' element={<GSHome/>}/>

@@ -14,9 +14,11 @@ function CitizenHome() {
        Apply Request
      </Button>
    </Link>
+   <Link to="/checkStatus1"> {/* Use Link for navigation */}
    <Button variant="secondary" size="lg">
-     Click Status
+     Check Status
    </Button>
+   </Link>
    <button className="login-button" onClick={()=> signOut()}>Logout</button>
  </div>
   )

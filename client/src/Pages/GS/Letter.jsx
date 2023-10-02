@@ -140,6 +140,10 @@ function Letter() {
         <Form.Label>Purpose of the letter</Form.Label>
         <Form.Control as="textarea" rows={3} />
       </Form.Group>
+      <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+        <Form.Label>Signature</Form.Label>
+        <Form.Control type="text" placeholder="" />
+      </Form.Group>
       <Button variant="primary" type="submit">
         Send
       </Button>

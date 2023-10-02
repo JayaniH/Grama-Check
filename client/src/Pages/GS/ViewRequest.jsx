@@ -11,6 +11,10 @@ import Modal from '@mui/material/Modal';
 import Dialog from '@mui/material/Dialog'; // Import Material-UI Dialog component
 import DialogActions from '@mui/material/DialogActions'; // Import DialogActions for buttons
 import DialogContent from '@mui/material/DialogContent'; // Import DialogContent for message content
+import { Link } from 'react-router-dom';
+
+
+
 
 const style = {
   position: 'absolute',
@@ -61,6 +65,9 @@ const ViewRequest = () => {
     setCancelDialogOpen(false);
   };
 
+
+
+ 
   return (
     <Container fluid>
       <Row style={{ width: '100%', height: 'auto', marginRight: 0 }}>
@@ -143,9 +150,11 @@ const ViewRequest = () => {
                 {/* Add "Approved" and "Cancel" buttons */}
                  {/* Add "Approved" and "Cancel" buttons with gaps */}
                  <div style={{ marginTop: '20px' }}>
-                  <Button variant="contained" color="primary" style={{ marginRight: '10px' }} onClick={handleMessageDialogOpen}>
+                 <Link to="/letter">
+                  <Button variant="contained" color="primary" style={{ marginRight: '10px' }} >
                     Approved
                   </Button>
+                  </Link>
                   <Button variant="contained" color="secondary" onClick={handleCancelDialogOpen}>
                     Cancel
                   </Button>
@@ -163,16 +172,7 @@ const ViewRequest = () => {
         aria-labelledby="message-dialog-title"
         aria-describedby="message-dialog-description"
       >
-        <DialogContent>
-          <Typography id="message-dialog-title" variant="h6">
-            All the information are correct
-          </Typography>
-          <DialogActions>
-            <Button onClick={handleMessageDialogClose} color="primary">
-              Send Letter
-            </Button>
-          </DialogActions>
-        </DialogContent>
+        
       </Dialog>
 
        {/* Message dialog component for "Cancel" */}

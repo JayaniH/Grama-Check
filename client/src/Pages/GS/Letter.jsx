@@ -6,9 +6,42 @@ import Button from 'react-bootstrap/Button';
 import DatePicker from 'react-datepicker'; // Import the date picker component
 import 'react-datepicker/dist/react-datepicker.css'; // Import date picker styles
 
+
 function Letter() {
    // Define state variables for the date
    const [selectedDate, setSelectedDate] = useState(null);
+   
+   const [signatureImage, setSignatureImage] = useState(null);
+
+   const handleFileChange = (event) => {
+     // Get the selected file from the input
+     const file = event.target.files[0];
+ 
+     // You can add further validation here, e.g., check file type, size, etc.
+ 
+     // Set the selected file as the signature image
+     setSignatureImage(file);
+   };
+ 
+   const handleSubmit = (event) => {
+     event.preventDefault();
+ 
+     // You can upload the signatureImage to your server here
+     // Example: Use the FormData API to send the file to the server
+ 
+     const formData = new FormData();
+     formData.append('signatureImage', signatureImage);
+ 
+     // Send the formData to your server using fetch or an HTTP library
+ 
+     // Reset the signatureImage state after submission
+     setSignatureImage(null);
+   };
+
+   
+
+  
+
   return (
     <div className='letter'>
        <div className='form-container'>
@@ -141,9 +174,11 @@ function Letter() {
         <Form.Control as="textarea" rows={3} />
       </Form.Group>
       <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-        <Form.Label>Signature</Form.Label>
-        <Form.Control type="text" placeholder="" />
-      </Form.Group>
+            <Form.Label>Signature </Form.Label>
+            <Form.Control type="file" accept="image/*" onChange={handleFileChange} />
+          </Form.Group>
+     
+          
       <Button variant="primary" type="submit">
         Send
       </Button>

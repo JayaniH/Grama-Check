@@ -114,6 +114,24 @@ paths:
                 $ref: '#/components/schemas/ErrorPayload'
         "200":
           description: Ok
+  /updateStatus/{Request_id}:
+    put:
+      operationId: putUpdatestatusRequestId
+      parameters:
+      - name: Request_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorPayload'
+        "200":
+          description: Ok
 components:
   schemas:
     allDetails:
@@ -129,7 +147,9 @@ components:
       - gs_division_number
       - house_number
       - occupation
+      - reason
       - religion
+      - request_id
       - request_status
       - requested_date
       - required_date
@@ -172,11 +192,16 @@ components:
           type: string
         DOB:
           $ref: '#/components/schemas/Date'
+        request_id:
+          type: integer
+          format: int64
         requested_date:
           $ref: '#/components/schemas/Date'
         required_date:
           $ref: '#/components/schemas/Date'
         request_status:
+          type: string
+        reason:
           type: string
     ErrorPayload:
       type: object

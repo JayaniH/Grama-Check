@@ -3,7 +3,7 @@ import { useAuthContext } from "@asgardeo/auth-react";
 import { Navigate } from 'react-router-dom';
 
 function Page1() {
-  const { basicUserInfo, signOut ,getDecodedIDToken} = useAuthContext();
+  const { getDecodedIDToken} = useAuthContext();
   const [redirectTo, setRedirectTo] = useState(null);
 
   // useEffect(() => {
@@ -38,10 +38,7 @@ function Page1() {
 
   return (
     <div>
-      <p>{basicUserInfo}</p>
-      <button onClick={() => signOut()}>Logout</button> <br/>
-      {/* <button onClick={()=>checkUserGroup() }></button> */}
-      {/* Your component content */}
+     
     </div>
   );
 }

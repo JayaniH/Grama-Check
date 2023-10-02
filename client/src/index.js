@@ -48,12 +48,14 @@ function AuthRedirect() {
 //   scope: ["openid", "address", "email", "phone", "profile", "groups"]
 // }
 const config = {
-  signInRedirectURL: window.config.auth.signInRedirectURL,
-  signOutRedirectURL: window.config.auth.signOutRedirectURL,
-  clientID: window.config.auth.clientID,
-  baseUrl: window.config.auth.baseUrl,
+  signInRedirectURL: window.config.signInRedirectURL,
+  signOutRedirectURL: window.config.signOutRedirectURL,
+  clientID: window.config.clientID,
+  baseUrl: window.config.baseUrl,
   scope: ["openid", "address", "email", "phone", "profile", "groups"]
 }
+
+
 
 root.render(
   <AuthProvider config={config}>

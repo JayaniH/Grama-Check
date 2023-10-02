@@ -40,11 +40,18 @@ function AuthRedirect() {
   return null;
 }
 
+// const config = {
+//   signInRedirectURL: "http://localhost:3000/Page1",
+//   signOutRedirectURL: "http://localhost:3000/homePage",
+//   clientID: "KKH0Q5eG8ecfgHh2gEto51dLyDUa",
+//   baseUrl: "https://api.asgardeo.io/t/orgnization1",
+//   scope: ["openid", "address", "email", "phone", "profile", "groups"]
+// }
 const config = {
-  signInRedirectURL: "http://localhost:3000/Page1",
-  signOutRedirectURL: "http://localhost:3000/homePage",
-  clientID: "YKzbzLsh2co9_mPOJqf1B4HB0Dga",
-  baseUrl: "https://api.asgardeo.io/t/organization123",
+  signInRedirectURL: window.config.auth.signInRedirectURL,
+  signOutRedirectURL: window.config.auth.signOutRedirectURL,
+  clientID: window.config.auth.clientID,
+  baseUrl: window.config.auth.baseUrl,
   scope: ["openid", "address", "email", "phone", "profile", "groups"]
 }
 

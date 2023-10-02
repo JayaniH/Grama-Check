@@ -157,6 +157,10 @@ service /userDetails on new http:Listener(9090) {
     //get all requests data for the relavant gs
     resource function get requestData/[string gsDivisionCode]() returns allDetails[]|error {
 
+//   if (!isAuthorized(apiKey)) {
+//         return error("Unauthorized access");
+//     }
+
         allDetails[] citizenRequests = [];
         stream<allDetails, error?> resultStream = dbClient->query(
         `SELECT Citizen.*,Requests.requested_date,Requests.required_date, Requests.request_status
@@ -195,5 +199,9 @@ service /userDetails on new http:Listener(9090) {
     }
 
 }
+
+// function isAuthorized(string s) returns boolean {
+//     return false;
+// }
 
 

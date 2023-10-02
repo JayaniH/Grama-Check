@@ -2,7 +2,6 @@ import ballerina/http;
 import ballerina/time;
 import ballerinax/mysql;
 import ballerinax/mysql.driver as _;
-import ballerina/log;
 
 // import ballerina/sql;
 // import ballerina/os;
@@ -13,8 +12,8 @@ configurable string HOST = ?;
 configurable int PORT = ?;
 configurable string DATABASE = ?;
 
-// configurable string clientIDIdentityCheck = ?;
-// configurable string clientSecretIdentityCheck = ?;
+configurable string clientIDIdentityCheck = ?;
+configurable string clientSecretIdentityCheck = ?;
 
 // configurable string clientIDPoliceCheck = ?;
 // configurable string clientSecretPoliceCheck = ?;
@@ -59,11 +58,6 @@ public type requestPostDetails record {|
     string reason;
 |};
 
-// public type CombinedResult record {
-//     userDetails user;
-//     requestDetails request;
-// };
-
 type ErrorDetails record {
     string message;
     string details;
@@ -97,7 +91,6 @@ public type allDetails record {|
     string request_status;
     string reason;
 
-
 |};
 
 public type CombinedUserData record {
@@ -106,6 +99,24 @@ public type CombinedUserData record {
     boolean isaddressVerified;
     boolean isIdentityVerified;
 };
+
+http:Client addressCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-prod.e1-us-east-azure.choreoapis.dev/xqfp/address-check-api/adress-check-api-186/v1", auth = {
+    tokenUrl: "https://api.asgardeo.io/t/orgnization1/oauth2/token",
+    clientId: clientIDAdressCheck,
+    clientSecret: clientSecretAddressCheck
+});
+
+http:Client IdentityCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-prod.e1-us-east-azure.choreoapis.dev/xqfp/identity-check-service/identity-check-api-212/v1", auth = {
+    tokenUrl: "https://api.asgardeo.io/t/orgnization1/oauth2/token",
+    clientId: clientIDIdentityCheck,
+    clientSecret: clientSecretIdentityCheck
+});
+
+// http:Client policeCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-dev-internal.e1-us-east-azure.internal.choreoapis.dev/xqfp/police-check-service/policecheck-46e/v1.0",auth = {
+//     tokenUrl :"https://api.asgardeo.io/t/orgnization1/oauth2/token",
+//     clientId :clientIDPoliceCheck ,
+//     clientSecret : clientSecretPoliceCheck
+// });
 
 # A service representing a network-accessible API
 # bound to port `9090`.
@@ -121,36 +132,26 @@ service /userDetails on new http:Listener(9090) {
          WHERE NIC = ${NIC}`
     );
 
-      //  string accessTokenPoliceChek =  check getAccessToken(clientIDPoliceCheck,clientSecretPoliceCheck);
-       // string accessTokenIdentityChek =  check getAccessToken(clientIDIdentityCheck,clientSecretIdentityCheck);
-        string accessTokenAddressChek =  check getAccessToken(clientIDAdressCheck,clientSecretAddressCheck);
 
-
-
-        // http:Client policeCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-dev.e1-us-east-azure.choreoapis.dev/xqfp/police-check-api/police-check-api-46e/v1");
         // // Sends a `GET` request to the "/criminalData"
-        // boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC](headers = {accessTokenPoliceChek});
+        // boolean|http:ClientError isCriminal = check policeCheckClient->/criminalData/[NIC];
 
-        http:Client addressCheckClient = check new ("https://1adbbcb2-28ed-4caa-ace8-6191b640cb48-prod.e1-us-east-azure.choreoapis.dev/xqfp/address-check-api/adress-check-api-186/v1");
         // Sends a `GET` request to the "/validateNIC"
-        boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID](headers = {accessTokenAddressChek});
+        boolean|http:ClientError isaddressVerified = check addressCheckClient->/checkAddress/[gsDivisionNumber]/[houseNumber]/[streetName]/[areaPostOffice]/[city]/[district]/[userID];
 
-     //   http:Client IdentityCheckClient = check new ("http://identity-check-service-ogo-588361154:9090/IdentityCheck");
         // Sends a `GET` request to the "/criminalData"
-    //    boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID](headers = {accessTokenIdentityChek});
+        boolean|http:ClientError isIdentityVerified = check IdentityCheckClient->/validateNIC/[NIC]/[gsDivisionNumber]/[userID];
 
         // Create CombinedUserData record
         CombinedUserData userData = {
             user: user,
-            // isaddressVerified: check isIdentityVerified,
-            isaddressVerified: true,
+            isaddressVerified: check isIdentityVerified,
             isIdentityVerified: check isaddressVerified,
             // isCriminal: check isCriminal
-             isCriminal: true
+            isCriminal: true
         };
         return userData;
 
-     
     }
 
     //get all requests data for the relavant gs
@@ -160,8 +161,8 @@ service /userDetails on new http:Listener(9090) {
         stream<allDetails, error?> resultStream = dbClient->query(
         `SELECT Citizen.*,Requests.requested_date,Requests.required_date, Requests.request_status
         FROM Citizen 
-JOIN Requests ON Citizen.Citizen_id = Requests.Citizen_id 
-WHERE gs_division_number = ${gsDivisionCode};`
+        JOIN Requests ON Citizen.Citizen_id = Requests.Citizen_id 
+        WHERE gs_division_number = ${gsDivisionCode};`
     );
         check from allDetails citizen in resultStream
             do {
@@ -179,12 +180,10 @@ WHERE gs_division_number = ${gsDivisionCode};`
 
         _ = check dbClient->execute(`
         INSERT INTO Requests (requested_date, required_date, request_status, reason, Citizen_id)
-        VALUES (${request.requested_date}, ${request.required_date},"Pending",${request.reason},${citizenID})`);
+        VALUES (${request.requested_date}, ${request.required_date},"Inprogress",${request.reason},${citizenID})`);
 
         return <http:Ok>{};
     }
-
-    
 
     resource function put updateStatus/[string Request_id]() returns error|http:Ok {
 
@@ -197,25 +196,4 @@ WHERE gs_division_number = ${gsDivisionCode};`
 
 }
 
-function getAccessToken(string clientId,string clientSecret) returns string|error {
-    string tokenEndpoint = "https://api.asgardeo.io/t/orgnization1/oauth2/token";
-
-
-    string credentialsBase64 = (clientId + ":" + clientSecret).toBytes().toBase64();
-    string payload = "grant_type=client_credentials";
-    map<string> headers = {
-        "Authorization": "Basic " + credentialsBase64,
-        "Content-Type": "application/x-www-form-urlencoded"
-    };
-
-    http:Client tokenClient = check new (tokenEndpoint);
-    http:Response tokenResponse = check tokenClient->post("", payload, headers);
-
-    json responseJson = check tokenResponse.getJsonPayload();
-    string accessToken = check responseJson.access_token;
-
-    log:printInfo("Successfully retrieved the new access token.");
-
-    return accessToken;
-}
 

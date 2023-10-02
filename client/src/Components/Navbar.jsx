@@ -1,8 +1,11 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import { useAuthContext } from "@asgardeo/auth-react";
 
 function NavigationBar() {
+
+  const {  signOut } = useAuthContext();
   return (
     <>
      
@@ -11,9 +14,13 @@ function NavigationBar() {
         <Container>
           <Navbar.Brand href="#home">Grama Check</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
-            <Nav.Link href="#pricing">Pricing</Nav.Link>
+            <Nav.Link href="#home"></Nav.Link>
+            <Nav.Link href="#features"></Nav.Link>
+            <Nav.Link href="#pricing"></Nav.Link>
+          </Nav>
+
+          <Nav>
+            <Nav.Link onClick={()=> signOut()}>Logout</Nav.Link>
           </Nav>
         </Container>
       </Navbar>

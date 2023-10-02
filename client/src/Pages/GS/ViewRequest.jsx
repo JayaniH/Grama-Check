@@ -65,7 +65,7 @@ const ViewRequest = () => {
           { headers }
         );
 
-        setRequestData(response.data.citizenRequests);
+        setRequestData(response.data);
       } catch (error) {
         console.error(error);
       }

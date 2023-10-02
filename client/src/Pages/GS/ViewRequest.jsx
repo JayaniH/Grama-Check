@@ -51,6 +51,7 @@ const ViewRequest = () => {
   //     setRequestData(response.data.citizenRequests);
   //   });
   // }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -65,7 +66,12 @@ const ViewRequest = () => {
           { headers }
         );
 
-        setRequestData(response.data);
+        if (response.status === 200) {
+          setRequestData(response.data);
+        } else {
+          
+          console.error(`Request failed with status code ${response.status}`);
+        }
       } catch (error) {
         console.error(error);
       }

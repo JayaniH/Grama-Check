@@ -139,7 +139,7 @@ const ViewRequest = () => {
               <th className='tableData'>View Details</th>
             </tr>
           </thead>
-          <tbody>
+          {/* <tbody>
             <tr>
               <td className='tableData'>1</td>
               <td className='tableData'>Mark</td>
@@ -155,7 +155,26 @@ const ViewRequest = () => {
                 </button>
               </td>
             </tr>
-            {/* Add more rows as needed */}
+        
+          </tbody> */}
+          <tbody>
+            {requestData.map((data, index) => (
+              <tr key={index}>
+                <td className='tableData'>{index + 1}</td>
+                <td className='tableData'>{data.full_name}</td>
+                <td className='tableData'>{data.NIC}</td>
+                <td className='tableData'>{data.required_date.day}/{data.required_date.month}/{data.required_date.year}</td>
+                <td className='tableData'>{data.request_status}</td>
+                <td className='tableData'>
+                  <button
+                    style={{ fontSize: '15px', marginRight: '0px', border: '0px' }}
+                    onClick={() => handleOpen(data)}
+                  >
+                    <FontAwesomeIcon icon={faEye} />
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </Row>

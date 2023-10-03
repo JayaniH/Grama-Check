@@ -200,8 +200,5 @@ service /userDetails on new http:Listener(9090) {
 
 }
 
-// function isAuthorized(string s) returns boolean {
-//     return false;
-// }
 
 

@@ -46,7 +46,16 @@ function CheckStatus1() {
       <h2>Check Request Status</h2>
       <Table striped bordered hover>
         {/* Table header here */}
+
         <tbody>
+        <tr>
+        <th>#</th>
+        <th>Request Id</th>
+        < th>Request Date</th>
+        <th>Reason</th>
+        <th>Request Status</th>
+        <th>View Letters</th>
+        </tr>
           <tr>
             <td>1</td>
             <td>Mark</td>

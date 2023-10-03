@@ -13,22 +13,11 @@ function Home() {
     // Handle the error
 })
 
- /* useEffect(() => {
-    getAccessToken()
-      .then((accessToken) => {
-        console.log(accessToken);
-        setToken(accessToken); // Set the 'token' state
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []); */
 
   return (
     <div className="home">
       <h1>Welcome to Grama Check</h1>
       <div className="buttons">
-        <button className="register-button">Register</button>
         <button className="login-button" onClick={() => signIn()}>
           Login
         </button>
